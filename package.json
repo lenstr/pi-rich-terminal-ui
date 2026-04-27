@@ -1,6 +1,6 @@
 {
   "name": "pi-rich-terminal-ui",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Pi extension: render rich terminal UI specs including charts, dashboards, tables, metrics, and diagrams",
   "type": "module",
   "keywords": [

@@ -48,7 +48,8 @@ export default function (pi: ExtensionAPI) {
       "Use ArchitectureDiagram for Mermaid-like architecture or flow diagrams; provide structured nodes, edges, direction, and optional groups instead of Mermaid source text.",
       "Use render_rich_ui for XYChart requests instead of replying with Markdown-only text.",
       "render_rich_ui input must be a spec object: { root: \"id\", elements: { id: { type: \"LineChart\", props: {...}, children: [] } } }.",
-      "For line graphs, use element type LineChart with props.series, props.xLabel, props.yLabel, and props.showLegend. Each series must be { name, data: [{ x, y, label? }] }; x/y must be numeric and category labels such as months go in point.label, not point.x.",
+      "For line graphs, use element type LineChart with props.series, props.xLabel, props.yLabel, and props.showLegend. Each series must be { name, color?, data: [{ x, y, label? }] }; x/y must be numeric and category labels such as months go in point.label, not point.x.",
+      "For multi-series charts, set series[].color to distinct colors such as blue, red, green, yellow, magenta, cyan, gray, or theme tokens such as accent, success, error, warning, muted, dim, text.",
       "Text elements use props.text (not content). Box borders use props.borderStyle (for example \"single\"), not border: true.",
     ],
     parameters: RawSpecSchema,
@@ -814,14 +815,19 @@ function getThemeColor(value: unknown, fallback: ThemeColor): ThemeColor {
   if (typeof value !== "string") return fallback;
 
   switch (value.toLowerCase()) {
+    case "blue":
+    case "cyan": return "accent";
     case "green": return "success";
-    case "yellow": return "warning";
     case "red": return "error";
+    case "yellow":
+    case "orange": return "warning";
+    case "magenta":
+    case "purple":
+    case "violet": return "customMessageText";
     case "gray":
     case "grey": return "muted";
-    case "cyan":
-    case "blue":
-    case "magenta": return "accent";
+    case "black": return "dim";
+    case "white": return "text";
     default: return fallback;
   }
 }
@@ -894,8 +900,12 @@ function getExplicitXYSeries(value: unknown): XYSeries[] {
     if (!isRecord(item)) return [];
     const data = getXYPoints(item.data);
     if (data.length === 0) return [];
-    return [{ name: getString(item.name, `series ${index + 1}`), color: getString(item.color, "accent"), type: getString(item.type), data }];
+    return [{ name: getString(item.name, `series ${index + 1}`), color: getString(item.color, defaultSeriesColor(index)), type: getString(item.type), data }];
   });
+}
+
+function defaultSeriesColor(index: number): string {
+  return ["accent", "success", "warning", "error", "customMessageText", "muted"][index % 6] ?? "accent";
 }
 
 function getXYPoints(value: unknown): XYPoint[] {
