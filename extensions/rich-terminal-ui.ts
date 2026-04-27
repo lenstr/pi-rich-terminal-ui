@@ -892,8 +892,7 @@ function getExplicitXYSeries(value: unknown): XYSeries[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((item, index) => {
     if (!isRecord(item)) return [];
-    const dataPoints = getXYPoints(item.data);
-    const data = dataPoints.length > 0 ? dataPoints : getXYPoints(item.points);
+    const data = getXYPoints(item.data);
     if (data.length === 0) return [];
     return [{ name: getString(item.name, `series ${index + 1}`), color: getString(item.color, "accent"), type: getString(item.type), data }];
   });
