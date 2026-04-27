@@ -48,7 +48,8 @@ export default function (pi: ExtensionAPI) {
       "Use ArchitectureDiagram for Mermaid-like architecture or flow diagrams; provide structured nodes, edges, direction, and optional groups instead of Mermaid source text.",
       "Use render_rich_ui for XYChart requests instead of replying with Markdown-only text.",
       "render_rich_ui input must be a spec object: { root: \"id\", elements: { id: { type: \"LineChart\", props: {...}, children: [] } } }.",
-      "For line graphs, use element type LineChart with props.series, props.xLabel, props.yLabel, and props.showLegend.",
+      "For line graphs, use element type LineChart with props.series, props.xLabel, props.yLabel, and props.showLegend. Points must use numeric x/y; put category labels such as months in point.label, not point.x.",
+      "Text elements use props.text (not content). Box borders use props.borderStyle (for example \"single\"), not border: true.",
     ],
     parameters: RawSpecSchema,
     prepareArguments(args) {
