@@ -47,8 +47,11 @@ export default function (pi: ExtensionAPI) {
       "Use render_rich_ui whenever the user asks to show, display, render, or visualize charts, dashboards, tables, metrics, graphs, architecture diagrams, or flow diagrams.",
       "Use ArchitectureDiagram for Mermaid-like architecture or flow diagrams; provide structured nodes, edges, direction, and optional groups instead of Mermaid source text.",
       "Use render_rich_ui for XYChart requests instead of replying with Markdown-only text.",
+      "Supported element types are: Box, Text, Heading, Divider, Newline, Spacer, BarChart, XYChart, LineChart, VerticalBarChart, Sparkline, Table, List, Card, StatusLine, KeyValue, Badge, ProgressBar, Metric, Callout, Timeline, ArchitectureDiagram, FlowDiagram, Diagram. Do not invent layout types like Columns; use Box with props.flexDirection=\"row\" and props.gap for horizontal layouts.",
       "render_rich_ui input must be a spec object: { root: \"id\", elements: { id: { type: \"LineChart\", props: {...}, children: [] } } }.",
+      "Every id listed in an element's children array must exist in elements. Use children: [] for leaf elements.",
       "For line graphs, use element type LineChart with props.series, props.xLabel, props.yLabel, and props.showLegend. Each series must be { name, color?, data: [{ x, y, label? }] }; x/y must be numeric and category labels such as months go in point.label, not point.x.",
+      "For tables, use props.columns as [{ header, key, width? }] and props.rows as objects keyed by column key.",
       "For multi-series charts, set series[].color to distinct colors such as blue, red, green, yellow, magenta, cyan, gray, or theme tokens such as accent, success, error, warning, muted, dim, text.",
       "Text elements use props.text (not content). Box borders use props.borderStyle (for example \"single\"), not border: true.",
     ],
@@ -623,6 +626,10 @@ function validateSpec(spec: RichSpec): string[] {
   if (!spec.elements[spec.root]) errors.push(`root element "${spec.root}" is missing`);
 
   for (const [id, element] of Object.entries(spec.elements)) {
+    for (const childId of element.children) {
+      if (!spec.elements[childId]) errors.push(`element "${id}" references missing child "${childId}"`);
+    }
+
     if (element.type === "XYChart") {
       const chartTypeValue = element.props.type ?? element.props.chartType;
       if (chartTypeValue === undefined) {
