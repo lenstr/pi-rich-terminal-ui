@@ -1,0 +1,32 @@
+{
+  "name": "pi-rich-terminal-ui",
+  "version": "1.0.0",
+  "description": "Pi extension: render rich terminal UI specs including charts, dashboards, tables, metrics, and diagrams",
+  "type": "module",
+  "keywords": [
+    "pi-package"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-agent-core": "*",
+    "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-tui": "*",
+    "typebox": "*"
+  },
+  "devDependencies": {
+    "@mariozechner/pi-agent-core": "^0.70.2",
+    "@mariozechner/pi-coding-agent": "^0.70.2",
+    "@mariozechner/pi-tui": "^0.70.2",
+    "@types/node": "^25.2.3",
+    "typebox": "^1.1.34",
+    "typescript": "^5.9.3"
+  },
+  "pi": {
+    "extensions": [
+      "./extensions/rich-terminal-ui.ts"
+    ]
+  }
+}
